@@ -1,16 +1,5 @@
-# secret
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+？表示变量可空
+？？表示当变量为空时变量值为该操作数。
+！如果开发者能够确保一个可空变量是非空变量可以给这个变量加！
+required只能加在函数命名参数类型声明之前。用来告诉编译器：“我后面会初始化这个变量”。
+late关键字加在变量类型声明前。用来告诉编译器：“我后面会初始化这个变量”。

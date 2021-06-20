@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:secret/core/base_widget.dart';
+import 'package:secret/components/bottom_bar/bottom_bar.dart';
+import 'package:secret/components/bottom_bar/tab_icons.dart';
+import 'package:secret/pages/home/my.dart';
+import 'package:secret/pages/owner/ower.dart';
 
 import 'owner/permission_page.dart';
 
@@ -15,22 +18,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with TickerProviderStateMixin, WidgetsBindingObserver, BaseWidget {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController animationController;
 
-  Widget tabBody = Container(
-    color: Colors.white,
-  );
-
+  List<TabIcon> tabIconsList = TabIcon.tabIconsList;
+  late Widget tabBody;
+  var tabList;
   @override
   void initState() {
+    getData();
+    WidgetsBinding.instance!.addObserver(this);
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
+    tabBody = My();
+    tabList = [
+      My(),
+      Owner(animationController: animationController),
+      My(),
+      Owner(animationController: animationController)
+    ];
+    // tabBody = [
+    //   My(),
+    //   Owner(animationController: animationController),
+    //   My(),
+    //   Owner(animationController: animationController)
+    // ];
     super.initState();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance!.removeObserver(this); //销毁
     animationController.dispose();
     super.dispose();
   }
@@ -38,34 +56,26 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: FutureBuilder<bool>(
-        future: getData(),
-        builder: (context, AsyncSnapshot<bool> snapshot) {
-          print(snapshot.toString());
-          if (snapshot.data == null) {
-            return const SizedBox();
-          } else {
-            return Stack(
-              children: [
-                tabBody,
-                //bottomBar(),
-              ],
-            );
-          }
-        },
+      ///（FutureBuilder多次请求的原理是每次setState函数刷新，都会返回一个新的对象，如果可以对对象进行保存，就可以避免重复请求）
+      ///FutureBuilder组件内置了setState函数，都会出发future请求从而对页面进行一次刷新
+      ///只在页面第一次build的时候采用自动，页面不disposed的情况下不再自动获取数据，改为手动获取
+      body: Stack(
+        children: [tabBody, bottomBar()],
       ),
+      //bottomNavigationBar: bottomBar(),
     );
   }
 
   Future<bool> getData() async {
     print(await requestAllPermission());
+
     return true;
   }
 
   ///[todo] 实现类似淘宝复制黏贴指令，进来就读取粘贴板
   @override //inactive->paused->inactive->resumed
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("app_state:${state.toString()}");
     switch (state) {
       case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
         break;
@@ -78,42 +88,34 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  // Widget bottomBar() {
-  //   return Column(
-  //     children: <Widget>[
-  //       const Expanded(
-  //         child: SizedBox(),
-  //       ),
-  //       BottomBarView(
-  //         tabIconList: tabIconList,
-  //         addClick: () {
-  //           print('dsd');
-  //         },
-  //         changeIndex: (int index) {
-  //           if (index == 0 || index == 2) {
-  //             animationController.reverse().then<dynamic>((data) {
-  //               if (!mounted) {
-  //                 return;
-  //               }
-  //               setState(() {
-  //                 tabBody =
-  //                     SecretPage(animationController: animationController);
-  //               });
-  //             });
-  //           } else if (index == 1 || index == 3) {
-  //             animationController.reverse().then<dynamic>((data) {
-  //               if (!mounted) {
-  //                 return;
-  //               }
-  //               setState(() {
-  //                 tabBody =
-  //                     SecretPage(animationController: animationController);
-  //               });
-  //             });
-  //           }
-  //         },
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget bottomBar() {
+    return Column(
+      children: <Widget>[
+        const Expanded(
+          child: SizedBox(),
+        ),
+        BottomBar(
+          tabIconsList: tabIconsList,
+          addClick: () {
+            Navigator.of(context).push<void>(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const My(),
+              ),
+            );
+          },
+          changeIndex: (int index) {
+            animationController.reverse().then<dynamic>((data) {
+              if (!mounted) {
+                return;
+              }
+              setState(() {
+                tabBody = tabList[index];
+                //this.index = index;
+              });
+            });
+          },
+        ),
+      ],
+    );
+  }
 }

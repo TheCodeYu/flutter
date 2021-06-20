@@ -1,6 +1,4 @@
-/*
- * @discripe: 启动页右上角倒计时
- */
+///  @description 启动页右上角倒计时
 import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
@@ -49,7 +47,7 @@ class _CountdownInit extends State<CountdownInit>
   }
 
   void _jumpIndex() {
-    if (false) {
+    if (true) {
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       Navigator.of(context).pushReplacementNamed('/login');
@@ -84,7 +82,7 @@ class _CountdownInit extends State<CountdownInit>
               '${countNum}s',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 12,
+                fontSize: 14,
               ),
             ),
           ),

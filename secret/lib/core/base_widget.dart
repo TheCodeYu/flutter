@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 abstract class BaseWidget {
   //默认字体大小
-  double defaultSize = 18;
+  //double defaultSize = 18;
 
   // 默认斗鱼主题色
   static final defaultColor = Color(0xffff5d23);

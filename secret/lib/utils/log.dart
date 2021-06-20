@@ -22,7 +22,7 @@ class Log {
   ///[todo]:存储到数据库或者传递到后台
   static void _printLog(String tag, String level, Object message) {
     StringBuffer stringBuffer = new StringBuffer();
-    stringBuffer..write(level)..write(tag ?? '')..write(': ')..write(message);
+    stringBuffer..write(level)..write(tag)..write(': ')..write(message);
     print(stringBuffer);
   }
 }

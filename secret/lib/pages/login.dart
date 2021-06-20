@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
   void dispose() {
     rx.unSubscribe('chooseArea', name: 'LoginPage');
     _longPressRecognizer.dispose();
-    if (timer!.isActive) {
+    if (timer != null && timer!.isActive) {
       timer!.cancel();
     }
     super.dispose();
@@ -102,9 +102,9 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
           centerTitle: true,
           title: Text(
             title!,
-            style: TextStyle(fontSize: dp(16), color: Colors.black),
+            style: TextStyle(fontSize: dp(16)),
           ),
-          backgroundColor: Colors.white,
+          //backgroundColor: Colors.white,
           titleSpacing: 0,
           // leading: GestureDetector(
           //   onTap: () => Navigator.of(context).pop(),
@@ -125,8 +125,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                           type == 3
                               ? locale(context).login_m
                               : locale(context).login_n,
-                          style:
-                              TextStyle(fontSize: dp(16), color: Colors.black),
+                          style: TextStyle(fontSize: dp(16)),
                         ),
                         Padding(padding: EdgeInsets.only(left: dp(20)))
                       ],
@@ -137,7 +136,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
         ),
         preferredSize: Size.fromHeight(dp(48)),
       ),
-      backgroundColor: Color(0xffeeeeee),
+      //backgroundColor: Color(0xffeeeeee),
       body: Padding(
         padding: EdgeInsets.only(left: dp(10), right: dp(10)),
         child: Column(
@@ -182,23 +181,25 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                     margin: EdgeInsets.only(top: dp(18)),
                     height: dp(40),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      border: Border(
+                          left: BorderSide(),
+                          right: BorderSide(),
+                          top: BorderSide(),
+                          bottom: BorderSide()),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.only(right: dp(20)),
+                      padding: EdgeInsets.only(left: dp(20), right: dp(20)),
                       child: Row(
                         children: <Widget>[
+                          TextButton(
+                              onPressed: _showAreaList,
+                              child: Text(
+                                '+$_phoneNumber',
+                                textAlign: TextAlign.center,
+                              )),
                           Expanded(
                             flex: 1,
-                            child: Text(
-                              '+$_phoneNumber',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Color(0xffff7701)),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 3,
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border(
@@ -209,6 +210,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                               child: TextField(
                                 controller: _mobileController,
                                 inputFormatters: [
+                                  LengthLimitingTextInputFormatter(11),
                                   FilteringTextInputFormatter.allow(
                                       RegExp(r'[0-9]')),
                                 ],
@@ -216,7 +218,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                                 cursorColor: BaseWidget.defaultColor,
                                 cursorWidth: 1.5,
                                 style: TextStyle(
-                                  color: Color(0xff333333),
+                                  // color: Color(0xff333333),
                                   fontSize: dp(16.0),
                                 ),
                                 decoration: InputDecoration(
@@ -237,17 +239,19 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                     margin: EdgeInsets.only(top: dp(18)),
                     height: dp(40),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      border: Border(
+                          left: BorderSide(),
+                          right: BorderSide(),
+                          top: BorderSide(),
+                          bottom: BorderSide()),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                     child: Padding(
                       padding: EdgeInsets.only(left: dp(20), right: dp(20)),
                       child: Row(
                         children: <Widget>[
-                          Icon(Icons.person),
-                          SizedBox(
-                            width: dp(25.0),
-                          ),
+                          TextButton(
+                              onPressed: null, child: Icon(Icons.person)),
                           Expanded(
                             flex: 1,
                             child: Container(
@@ -267,7 +271,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                                 cursorColor: BaseWidget.defaultColor,
                                 cursorWidth: 1.5,
                                 style: TextStyle(
-                                  color: Color(0xff333333),
+                                  //color: Color(0xff333333),
                                   fontSize: dp(12.0),
                                 ),
                                 decoration: InputDecoration(
@@ -289,15 +293,18 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                     margin: EdgeInsets.only(top: dp(18)),
                     height: dp(40),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      border: Border(
+                          left: BorderSide(),
+                          right: BorderSide(),
+                          top: BorderSide(),
+                          bottom: BorderSide()),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.only(left: dp(20), right: dp(20)),
+                      padding: EdgeInsets.only(left: dp(20), right: dp(5)),
                       child: Row(
                         children: <Widget>[
-                          Icon(Icons.lock),
-                          SizedBox(width: dp(25.0)),
+                          TextButton(onPressed: null, child: Icon(Icons.lock)),
                           Expanded(
                             flex: 1,
                             child: Container(
@@ -311,9 +318,12 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                                 controller: _passwordController,
                                 obscureText: true,
                                 cursorColor: BaseWidget.defaultColor,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(12),
+                                ],
                                 cursorWidth: 1.5,
                                 style: TextStyle(
-                                  color: Color(0xff333333),
+                                  //color: Color(0xff333333),
                                   fontSize: dp(16.0),
                                 ),
                                 decoration: InputDecoration(
@@ -336,15 +346,20 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                     margin: EdgeInsets.only(top: dp(18)),
                     height: dp(40),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      border: Border(
+                          left: BorderSide(),
+                          right: BorderSide(),
+                          top: BorderSide(),
+                          bottom: BorderSide()),
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                     child: Padding(
                       padding: EdgeInsets.only(left: dp(20), right: dp(5)),
                       child: Row(
                         children: <Widget>[
-                          Icon(Icons.admin_panel_settings),
-                          SizedBox(width: dp(25.0)),
+                          TextButton(
+                              onPressed: null,
+                              child: Icon(Icons.admin_panel_settings)),
                           Expanded(
                             flex: 1,
                             child: Container(
@@ -364,7 +379,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                                 cursorColor: BaseWidget.defaultColor,
                                 cursorWidth: 1.5,
                                 style: TextStyle(
-                                  color: Color(0xff333333),
+                                  //color: Color(0xff333333),
                                   fontSize: dp(16.0),
                                 ),
                                 decoration: InputDecoration(
@@ -459,7 +474,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                     ? GestureDetector(
                         onTap: _forgetPassword,
                         child: Text(
-                          '忘记密码？',
+                          locale(context).forgetPWD,
                           style: TextStyle(
                             color: Color(0xff999999),
                           ),
@@ -469,7 +484,9 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                     ? GestureDetector(
                         onTap: _changePhoneLogin,
                         child: Text(
-                          type == 2 ? '密码登录' : '验证码登录',
+                          type == 2
+                              ? locale(context).login_p
+                              : locale(context).login_c,
                           style: TextStyle(
                             color: Color(0xffff7701),
                           ),
@@ -479,7 +496,9 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                 GestureDetector(
                   onTap: _changeSinup,
                   child: Text(
-                    type == 0 ? '登陆' : '注册',
+                    type == 0
+                        ? locale(context).login
+                        : locale(context).register,
                     style: TextStyle(
                       color: Color(0xffff7701),
                       decorationStyle: TextDecorationStyle.solid,
@@ -505,7 +524,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                     color: Color(0xffe7e7e7),
                   ),
                   Text(
-                    '快速登录',
+                    locale(context).login_s,
                     style: TextStyle(
                         fontSize: 15,
                         color: Color(
@@ -543,6 +562,31 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
             ),
             Wrap(
               children: <Widget>[
+                Container(
+                    padding: EdgeInsets.all(0),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: _checkboxSelected,
+                          onChanged: (e) {
+                            setState(() {
+                              _checkboxSelected = e!;
+                            });
+                          },
+                          activeColor: BaseWidget.defaultColor, //选中时的颜色
+                        ),
+                        RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: TextStyle(
+                                color: Color(0xff999999),
+                                fontSize: 12,
+                                height: 1.2,
+                              ),
+                              text: locale(context).user_1,
+                            )),
+                      ],
+                    )),
                 RichText(
                   text: TextSpan(
                     style: TextStyle(
@@ -551,36 +595,22 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                       height: 1.2,
                     ),
                     children: [
-                      TextSpan(children: [
-                        // Checkbox(
-                        //   value: _checkboxSelected,
-                        //   activeColor: BaseWidget.defaultColor, //选中时的颜色
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       _checkboxSelected = value!;
-                        //     });
-                        //   },
-                        // ),
-                      ]),
                       TextSpan(
-                        text: '使用即为同意',
-                      ),
-                      TextSpan(
-                          text: '《隐私权政策》',
+                          text: locale(context).user_2,
                           style: TextStyle(color: Color(0xffff7701)),
                           recognizer: _longPressRecognizer),
                       TextSpan(
                         text: '、',
                       ),
                       TextSpan(
-                        text: '《用户注册协议》',
+                        text: locale(context).user_3,
                         style: TextStyle(color: Color(0xffff7701)),
                       ),
                       TextSpan(
-                        text: '和',
+                        text: locale(context).and,
                       ),
                       TextSpan(
-                        text: '《用户阳光行为准则》',
+                        text: locale(context).user_4,
                         style: TextStyle(color: Color(0xffff7701)),
                       ),
                     ],
@@ -614,5 +644,5 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
 
   void _forgetPassword() {}
 
-  //void _showAreaList() {}
+  void _showAreaList() {}
 }

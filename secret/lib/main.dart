@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:provider/provider.dart';
@@ -37,41 +38,50 @@ class MyApp extends StatelessWidget {
 
         ///注册订阅内容
         providers: [
-          ChangeNotifierProvider.value(value: LocaleModel()),
+          ChangeNotifierProvider.value(value: ApplicationData()),
         ],
         child: ScreenUtilInit(
             designSize: Size(320, 568),
             builder: () {
-              return Consumer<LocaleModel>(
-                builder: (context, LocaleModel localeMode, child) {
+              return Consumer<ApplicationData>(
+                builder: (context, appData, child) {
                   return MaterialApp(
                     builder: (context, child) =>
                         FlutterSmartDialog(child: child),
                     debugShowCheckedModeBanner: false,
+                    theme: appData.getTheme(),
+                    darkTheme: appData.getTheme(isDarkMode: true),
+                    themeMode: appData.getThemeMode(),
                     onGenerateTitle: (context) =>
                         AppLocalizations.of(context)!.app,
                     supportedLocales: AppLocalizations.supportedLocales,
                     localizationsDelegates: [
+                      LocaleNamesLocalizationsDelegate(),
                       AppLocalizations.delegate,
                       GlobalMaterialLocalizations.delegate,
                       GlobalWidgetsLocalizations.delegate,
                       const FallbackCupertinoLocalisationsDelegate(),
                       GlobalCupertinoLocalizations.delegate,
                     ],
-                    locale: localeMode.getLocale(),
+                    locale: appData.getLocale(),
                     localeResolutionCallback:
 
                         /// [supportedLocales] : supportedLocales
                         ///iOS上语言表示不一样 [en_US, zh_CN]  zh_Hans_CN languageCode-scriptCode-countryCode
                         (Locale? _locale, Iterable<Locale>? supportedLocales) {
-                      if (localeMode.getLocale() != null) {
-                        return localeMode.getLocale();
+                      if (_locale != null) {
+                        return _locale;
                       }
-                      Locale locale = Locale('en', 'US'); //设置默认语言
+
+                      Locale locale = Locale.fromSubtags(
+                          languageCode: 'zh',
+                          scriptCode: 'Hans',
+                          countryCode: 'CN'); //当APP不支持系统设置的语言时，设置默认语言
                       /// [todo]遍历系统选择的语言是否是支持的语言,去除了脚本代码，暂时没测会不会有问题,ios系统带了脚本代码
                       supportedLocales?.forEach((l) {
                         if ((l.countryCode == _locale?.countryCode) &&
                             (l.languageCode == _locale?.languageCode)) {
+                          //print('${l.toString()}  ${_locale.toString()}');
                           locale = Locale.fromSubtags(
                               languageCode: l.languageCode,
                               scriptCode: l.scriptCode,
@@ -80,7 +90,6 @@ class MyApp extends StatelessWidget {
                       });
                       return locale;
                     },
-                    title: 'FlutterScreenUtil Demo',
                     //home: HomePage(),
                     onGenerateRoute: RouterConfig.onGenerateRoute,
                   );

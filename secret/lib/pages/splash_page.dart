@@ -27,8 +27,8 @@ class _SplashPageState extends State<SplashPage> with BaseWidget {
         child: Stack(
           children: <Widget>[
             Positioned(
-              right: dp(25),
-              top: dp(25),
+              right: dp(40),
+              top: dp(40),
               child: CountdownInit(),
             ),
             SizedBox(

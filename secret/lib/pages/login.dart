@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:secret/api/login.dart';
+import 'package:secret/configs/global_config.dart';
 import 'package:secret/configs/rx_config.dart';
 import 'package:secret/core/base_widget.dart';
+import 'package:secret/utils/common_utils.dart';
 
 /// description: 登陆注册页面
 ///
@@ -265,9 +268,9 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                                 controller: _nickNameController,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9]')),
+                                      RegExp(r'[0-9a-zA-Z]')),
                                 ],
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.text,
                                 cursorColor: BaseWidget.defaultColor,
                                 cursorWidth: 1.5,
                                 style: TextStyle(
@@ -453,7 +456,30 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(5)),
               ),
-              onPressed: () {},
+              onPressed: () async {
+                if (!_checkboxSelected) {
+                  CommonUtils.showToast(locale(context).hit8);
+                  return;
+                }
+                if (type == 3) {
+                  if (_nickNameController.text.isEmpty ||
+                      _passwordController.text.isEmpty) {
+                    CommonUtils.showToast(locale(context).hit7);
+                    return;
+                  }
+                  // TextEditingController _nickNameController = TextEditingController();
+                  // TextEditingController _mobileController = TextEditingController();
+                  // TextEditingController _codeController = TextEditingController();
+                  // TextEditingController _passwordController = TextEditingController();
+                  var res = await login(_nickNameController.text,
+                      _passwordController.text, context);
+
+                  ///   清空缓存
+                  GlobalConfig.netCache.cache.clear();
+                  refreshToken(res['token']);
+                  Navigator.of(context).pushReplacementNamed('/home');
+                }
+              },
               child: Center(
                 child: Text(
                   type == 0 ? locale(context).register : locale(context).login,
@@ -558,7 +584,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(top: dh(20)),
+              padding: EdgeInsets.only(top: dh(50)),
             ),
             Wrap(
               children: <Widget>[
@@ -623,6 +649,8 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
       ),
     );
   }
+
+  void refreshToken(token) => GlobalConfig.setToken(token);
 
   void _changePhoneLogin() {
     setState(() {

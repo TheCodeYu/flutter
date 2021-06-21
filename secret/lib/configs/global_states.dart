@@ -110,12 +110,4 @@ class ApplicationData extends ProfileChangeNotifier {
       notifyListeners();
     }
   }
-
-  //app是否处于已登陆
-  String get isLogin => _application.token;
-
-  set isLogin(String token) {
-    _application.token = token;
-    notifyListeners();
-  }
 }

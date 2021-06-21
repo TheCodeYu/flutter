@@ -30,7 +30,6 @@ class _PieChartCustomerState extends State<PieChartCustomer> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.pieCharData.length);
     return AspectRatio(
       aspectRatio: 1.3,
       child: Card(
@@ -110,58 +109,6 @@ class _PieChartCustomerState extends State<PieChartCustomer> {
           ),
           titlePositionPercentageOffset: 0.55,
         );
-        switch (i) {
-          case 0:
-            return PieChartSectionData(
-              color: const Color(0xff0293ee).withOpacity(opacity),
-              value: 25,
-              title: '',
-              radius: 80,
-              titleStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xff044d7c)),
-              titlePositionPercentageOffset: 0.55,
-            );
-          case 1:
-            return PieChartSectionData(
-              color: const Color(0xfff8b250).withOpacity(opacity),
-              value: 25,
-              title: '',
-              radius: 65,
-              titleStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xff90672d)),
-              titlePositionPercentageOffset: 0.55,
-            );
-          case 2:
-            return PieChartSectionData(
-              color: const Color(0xff845bef).withOpacity(opacity),
-              value: 25,
-              title: '',
-              radius: 60,
-              titleStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xff4c3788)),
-              titlePositionPercentageOffset: 0.6,
-            );
-          case 3:
-            return PieChartSectionData(
-              color: const Color(0xff13d38e).withOpacity(opacity),
-              value: 25,
-              title: '',
-              radius: 70,
-              titleStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xff0c7f55)),
-              titlePositionPercentageOffset: 0.55,
-            );
-          default:
-            throw Error();
-        }
       },
     );
   }

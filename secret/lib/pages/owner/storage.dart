@@ -26,8 +26,10 @@ class _StoragePageState extends State<StoragePage>
   final ScrollController scrollController = ScrollController();
   late AnimationController animationController;
   List<PieCharData> pieCharData = [];
+  late Future<bool> future;
   @override
   void initState() {
+    future = getData();
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
     super.initState();
@@ -45,7 +47,7 @@ class _StoragePageState extends State<StoragePage>
     return Scaffold(
         body: Stack(children: [
       FutureBuilder(
-          future: getData(),
+          future: future,
           builder: (context, a) {
             if (a.hasData) return getMainListViewUI();
             return SizedBox(
@@ -98,7 +100,9 @@ class _StoragePageState extends State<StoragePage>
         ]);
   }
 
-  getData() async {
+  Future<bool> getData() async {
+    print(1111);
+
     /// 临时目录，适用于下载的缓存文件，此目录随时可以清除
     ///此目录为应用程序私有目录，其他应用程序无法访问此目录
     ///Android 上对应getCacheDir；iOS上对应NSCachesDirectory
@@ -111,6 +115,7 @@ class _StoragePageState extends State<StoragePage>
     //getExternalStorageDirectories
     //getExternalCacheDirectories
 
+    pieCharData.clear();
     Directory tempDir = await getTemporaryDirectory();
 
     var a = await _getTotalSizeOfFilesInDir(tempDir);
@@ -229,6 +234,7 @@ class _StoragePageState extends State<StoragePage>
 
   // 递归方式删除目录
   Future<Null> _delDir(FileSystemEntity file) async {
+    if (!file.existsSync()) return;
     if (file is Directory) {
       final List<FileSystemEntity> children = file.listSync();
       for (final FileSystemEntity child in children) {
@@ -243,9 +249,17 @@ class _StoragePageState extends State<StoragePage>
   void _clearCache() async {
     Directory tempDir = await getTemporaryDirectory();
     //删除缓存目录
-    await _delDir(tempDir);
-    //Fluttertoast.showToast(msg: '清除缓存成功');
-    setState(() {});
+    if (tempDir.existsSync()) await _delDir(tempDir);
+
+    if (Platform.isAndroid) {
+      var l = await getExternalCacheDirectories();
+      //删除缓存目录
+      l?.forEach((element) async {
+        if (element.existsSync()) await _delDir(element);
+      });
+    }
+
+    future = getData();
   }
 
   // 计算大小

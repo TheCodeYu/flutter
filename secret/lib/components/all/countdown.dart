@@ -2,6 +2,7 @@
 import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
+import 'package:secret/configs/global_config.dart';
 import 'package:secret/core/base_widget.dart';
 
 class CountdownInit extends StatefulWidget {
@@ -47,7 +48,7 @@ class _CountdownInit extends State<CountdownInit>
   }
 
   void _jumpIndex() {
-    if (true) {
+    if (GlobalConfig.application.token != '') {
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       Navigator.of(context).pushReplacementNamed('/login');

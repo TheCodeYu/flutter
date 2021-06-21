@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:secret/configs/data/app.dart';
+import 'package:secret/utils/dioUtil.dart';
 import 'package:secret/utils/log.dart';
+import 'package:secret/utils/sqlUtil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// description:全局配置类
@@ -12,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GlobalConfig {
   static late SharedPreferences _prefs;
 
+  static NetCache netCache = NetCache();
   //应用配置
   static App application = App();
 
@@ -36,10 +39,24 @@ class GlobalConfig {
     }
 
     ///2.初始化网络请求相关配置
+    DioUtil.init();
+
     ///3.数据库配置
+    await DBManager.init();
   }
 
   ///持久化profile信息
   static saveAppProfile() =>
       _prefs.setString('application', jsonEncode(application.toJson()));
+
+  ///app是否处于已登陆 token操作
+  static String getToken() {
+    if (application.token == '') return '';
+    return application.token;
+  }
+
+  static void setToken(String token) {
+    application.token = token;
+    saveAppProfile();
+  }
 }

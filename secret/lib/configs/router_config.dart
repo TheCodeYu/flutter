@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:secret/configs/global_config.dart';
+import 'package:secret/core/base_widget.dart';
 import 'package:secret/pages/home_page.dart';
 import 'package:secret/pages/login.dart';
 import 'package:secret/pages/owner/settings_page.dart';
@@ -11,10 +11,10 @@ import 'package:secret/pages/splash_page.dart';
 /// user: yuzhou
 /// date: 2021/6/12
 
-class RouterConfig {
+class RouterConfig with BaseWidget {
   /// 路由拦截器,可以做些权限控制，比如token检查
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
-    print('token:${GlobalConfig.application.token}  ${settings.toString()}');
+    print('onGenerateRoute:  ${settings.toString()}');
     Map<String, WidgetBuilder> paths = <String, WidgetBuilder>{
       '/': (context) => SplashPage(),
       HomePage.defaultRoute: (context) => HomePage(),

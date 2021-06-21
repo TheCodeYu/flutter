@@ -3,8 +3,11 @@ import 'package:secret/components/all/click_item.dart';
 import 'package:secret/components/all/personal.dart';
 import 'package:secret/components/all/title_view.dart';
 import 'package:secret/components/app_bar/app_bar.dart' as MyAppBar;
+import 'package:secret/configs/global_config.dart';
 import 'package:secret/core/base_widget.dart';
 import 'package:secret/pages/owner/settings_page.dart';
+
+import '../login.dart';
 
 /// description:
 ///
@@ -90,6 +93,27 @@ class _OwnerState extends State<Owner>
           onTap: () {
             Navigator.of(context).pushNamed(SettingPage.defaultRoute,
                 arguments: {"animationController": widget.animationController});
+          },
+          padding: dp(15.0),
+          animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                  parent: widget.animationController,
+                  curve: Interval((1 / count) * 4, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+          animationController: widget.animationController,
+        ),
+      ),
+    );
+    listViews.add(
+      MergeSemantics(
+        child: ClickItem(
+          title: 'exit',
+          style: TextStyle(fontSize: 18),
+          child: Icon(Icons.chevron_right),
+          onTap: () {
+            GlobalConfig.setToken('');
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                LoginPage.defaultRoute, (Route<dynamic> route) => false);
           },
           padding: dp(15.0),
           animation: Tween<double>(begin: 0.0, end: 1.0).animate(

@@ -30,13 +30,14 @@ class _HomePageState extends State<HomePage>
     WidgetsBinding.instance!.addObserver(this);
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = My();
+
     tabList = [
       My(),
       Owner(animationController: animationController),
       My(),
       Owner(animationController: animationController)
     ];
+    tabBody = tabList[0];
     // tabBody = [
     //   My(),
     //   Owner(animationController: animationController),
@@ -67,7 +68,7 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<bool> getData() async {
-    print(await requestAllPermission());
+    await requestAllPermission();
 
     return true;
   }

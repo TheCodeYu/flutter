@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider.value(value: ApplicationData()),
         ],
         child: ScreenUtilInit(
-            designSize: Size(320, 568),
+            designSize: Size(428, 926),
             builder: () {
               return Consumer<ApplicationData>(
                 builder: (context, appData, child) {
@@ -81,7 +81,6 @@ class MyApp extends StatelessWidget {
                       supportedLocales?.forEach((l) {
                         if ((l.countryCode == _locale?.countryCode) &&
                             (l.languageCode == _locale?.languageCode)) {
-                          //print('${l.toString()}  ${_locale.toString()}');
                           locale = Locale.fromSubtags(
                               languageCode: l.languageCode,
                               scriptCode: l.scriptCode,

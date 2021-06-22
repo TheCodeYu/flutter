@@ -22,8 +22,9 @@ class _MyState extends State<My> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     print("my");
-    return Container(
-      child: Text("dwedewfewfewfewfewfewfwefewfef"),
+    return Scaffold(
+      appBar: AppBar(),
+      body: Text("dwedewfewfewfewfewfewfwefewfef"),
     );
   }
 

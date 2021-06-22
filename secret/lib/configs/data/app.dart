@@ -1,5 +1,6 @@
 /// description:app 全局设置信息
 /// flutter packages pub run json_model
+/// flutter packages pub run build_runner build
 /// user: yuzhou
 /// date: 2021/6/10
 import 'package:json_annotation/json_annotation.dart';

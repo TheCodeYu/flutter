@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:secret/configs/global_config.dart';
 import 'package:secret/utils/common_utils.dart';
 
@@ -106,21 +105,24 @@ class MyInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     print("response:$response");
-
+    CommonUtils.cancelDismiss();
     if (response.data['code'] == 200) {
       handler.next(response);
     } else {
       if (response.data['code'] == 401) {
       } else if (response.data['code'] == 500) {}
-      BuildContext context = response.requestOptions.extra['context'];
-      CommonUtils.showToast(response.toString());
+      //BuildContext context = response.requestOptions.extra['context'];
+      //CommonUtils.showToast(response.data['msg']);
       //handler.
     }
+    CommonUtils.showToast(response.data['msg']);
   }
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
-    print("DioError:$err");
+    print("DioError:${err.error}");
+    CommonUtils.cancelDismiss();
+    CommonUtils.showToast(err.error.toString());
     super.onError(err, handler);
   }
 
@@ -128,7 +130,7 @@ class MyInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     /// 设置用户token（可能为null，代表未登录）
 
-    options.headers['Authorization'] = GlobalConfig.application.token;
+    options.headers['Authorization'] = GlobalConfig.getToken();
     print(
         "options:${options.extra.toString()} ${options.data.toString()} ${options.headers.toString()}");
     super.onRequest(options, handler);
@@ -136,19 +138,9 @@ class MyInterceptor extends Interceptor {
 }
 
 class DioUtil {
-  /// 在网络请求过程中可能会需要使用当前的context信息，比如在请求失败时
-  /// 打开一个新路由，而打开新路由需要context信息。
-  // DioUtil([this.context]) {
-  //   options = Options(extra: {'context': context});
-  // }
-  // BuildContext? context;
-  // late Options options;
-
   static MyInterceptor myInterceptor = MyInterceptor();
-  static Dio dio = Dio(BaseOptions(
-      baseUrl: 'http://192.168.2.7:8080',
-      sendTimeout: 10000,
-      contentType: 'application/json'));
+  static Dio dio =
+      Dio(BaseOptions(baseUrl: 'http://192.168.2.7:8080', sendTimeout: 10));
 
   static void init() {
     ///添加缓存插件

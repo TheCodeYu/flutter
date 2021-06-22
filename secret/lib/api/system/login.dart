@@ -20,3 +20,18 @@ login(user, pwd, BuildContext context) async {
       options: Options(extra: {"noCache": false, "context": context}));
   return r.data;
 }
+
+getInfo() async {
+  var r = await dio.get('/getInfo');
+  return r.data;
+}
+
+getRouters() async {
+  var r = await dio.get('/getRouters');
+  return r.data;
+}
+
+logout() async {
+  var r = await dio.post('/logout');
+  return r.data;
+}

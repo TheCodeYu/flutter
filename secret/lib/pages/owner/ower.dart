@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:secret/api/system/login.dart';
 import 'package:secret/components/all/click_item.dart';
 import 'package:secret/components/all/personal.dart';
 import 'package:secret/components/all/title_view.dart';
 import 'package:secret/components/app_bar/app_bar.dart' as MyAppBar;
 import 'package:secret/configs/global_config.dart';
 import 'package:secret/core/base_widget.dart';
+import 'package:secret/model/user.dart';
 import 'package:secret/pages/owner/settings_page.dart';
 
 import '../login.dart';
@@ -110,7 +114,8 @@ class _OwnerState extends State<Owner>
           title: 'exit',
           style: TextStyle(fontSize: 18),
           child: Icon(Icons.chevron_right),
-          onTap: () {
+          onTap: () async {
+            // print('logout:${await logout()}');
             GlobalConfig.setToken('');
             Navigator.of(context).pushNamedAndRemoveUntil(
                 LoginPage.defaultRoute, (Route<dynamic> route) => false);
@@ -146,6 +151,12 @@ class _OwnerState extends State<Owner>
   }
 
   Future<bool> getData() async {
+    return true;
+    var r = await getInfo();
+    User user = User.fromJson(r['user']);
+    log("info:${user.toString()}");
+    // r = await getRouters();
+    // log("router:$r");
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));
     return true;
   }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:secret/api/login.dart';
+import 'package:secret/api/system/login.dart';
 import 'package:secret/configs/global_config.dart';
 import 'package:secret/configs/rx_config.dart';
 import 'package:secret/core/base_widget.dart';
@@ -55,6 +55,10 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
   void initState() {
     super.initState();
 
+    ///[todo] 测试数据
+    _nickNameController.text = "admin";
+    _passwordController.text = "admin123";
+    _checkboxSelected = true;
     _longPressRecognizer = TapGestureRecognizer()..onTap = _handlePress;
     rx.subscribe('chooseArea', (data) {
       if (mounted) {
@@ -471,6 +475,10 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                   // TextEditingController _mobileController = TextEditingController();
                   // TextEditingController _codeController = TextEditingController();
                   // TextEditingController _passwordController = TextEditingController();
+                  print('11111');
+                  CommonUtils.showLoading();
+                  CommonUtils.showLoading();
+                  CommonUtils.showLoading();
                   var res = await login(_nickNameController.text,
                       _passwordController.text, context);
 
@@ -478,6 +486,7 @@ class _LoginPageState extends State<LoginPage> with BaseWidget {
                   GlobalConfig.netCache.cache.clear();
                   refreshToken(res['token']);
                   Navigator.of(context).pushReplacementNamed('/home');
+                  print('22222');
                 }
               },
               child: Center(

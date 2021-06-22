@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:secret/configs/global_states.dart';
+import 'package:secret/configs/rx_config.dart';
 import 'package:secret/core/base_widget.dart';
 import 'package:secret/utils/color.dart';
 
@@ -33,6 +34,9 @@ class _BottomBarState extends State<BottomBar>
   late AnimationController animationController;
   @override
   void initState() {
+    rx.subscribe('bottom_bar', (data) {
+      setRemoveAllSelection(widget.tabIconsList[data]);
+    }, name: 'BottomBar');
     animationController = AnimationController(
         vsync: this, duration: const Duration(microseconds: 1000));
     animationController.forward();
@@ -41,6 +45,7 @@ class _BottomBarState extends State<BottomBar>
 
   @override
   void dispose() {
+    rx.unSubscribe('bottom_bar', name: 'BottomBar');
     animationController.dispose();
     super.dispose();
   }
@@ -76,7 +81,7 @@ class _BottomBarState extends State<BottomBar>
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: dp(42),
+                        height: dp(62),
                         child: Padding(
                           padding:
                               const EdgeInsets.only(left: 8, right: 8, top: 4),
@@ -130,7 +135,7 @@ class _BottomBarState extends State<BottomBar>
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).padding.bottom - 5,
+                        height: MediaQuery.of(context).padding.bottom,
                       )
                     ],
                   ),
@@ -138,11 +143,11 @@ class _BottomBarState extends State<BottomBar>
               );
             }),
         Padding(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom - 5),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
           child: SizedBox(
             width: 38 * 2.0,
-            height: 38.0 + dp(42.0),
+            height: 38.0 + dp(62.0),
             child: Container(
               alignment: Alignment.topCenter,
               color: Colors.transparent,

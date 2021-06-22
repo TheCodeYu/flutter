@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:secret/components/bottom_bar/bottom_bar.dart';
 import 'package:secret/components/bottom_bar/tab_icons.dart';
+import 'package:secret/components/router_transition/sliding_around_router.dart';
+import 'package:secret/configs/rx_config.dart';
 import 'package:secret/pages/home/my.dart';
 import 'package:secret/pages/owner/ower.dart';
 
@@ -22,28 +24,17 @@ class _HomePageState extends State<HomePage>
   late AnimationController animationController;
 
   List<TabIcon> tabIconsList = TabIcon.tabIconsList;
-  late Widget tabBody;
-  var tabList;
+
+  late PageController controller;
   @override
   void initState() {
+    controller = PageController();
+    //controller.addListener(() {});
     getData();
     WidgetsBinding.instance!.addObserver(this);
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
 
-    tabList = [
-      My(),
-      Owner(animationController: animationController),
-      My(),
-      Owner(animationController: animationController)
-    ];
-    tabBody = tabList[0];
-    // tabBody = [
-    //   My(),
-    //   Owner(animationController: animationController),
-    //   My(),
-    //   Owner(animationController: animationController)
-    // ];
     super.initState();
   }
 
@@ -51,6 +42,7 @@ class _HomePageState extends State<HomePage>
   void dispose() {
     WidgetsBinding.instance!.removeObserver(this); //销毁
     animationController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -61,7 +53,21 @@ class _HomePageState extends State<HomePage>
       ///FutureBuilder组件内置了setState函数，都会出发future请求从而对页面进行一次刷新
       ///只在页面第一次build的时候采用自动，页面不disposed的情况下不再自动获取数据，改为手动获取
       body: Stack(
-        children: [tabBody, bottomBar()],
+        children: [
+          PageView(
+            controller: controller,
+            onPageChanged: (index) {
+              rx.push('bottom_bar', data: index);
+            },
+            children: [
+              My(),
+              Owner(animationController: animationController),
+              My(),
+              Owner(animationController: animationController)
+            ],
+          ),
+          bottomBar()
+        ],
       ),
       //bottomNavigationBar: bottomBar(),
     );
@@ -98,21 +104,24 @@ class _HomePageState extends State<HomePage>
         BottomBar(
           tabIconsList: tabIconsList,
           addClick: () {
-            Navigator.of(context).push<void>(
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => const My(),
-              ),
-            );
+            ///Navigator.of(context).push(GradualChangeRoute(SencondPage()));
+            // Navigator.of(context).push<void>(
+            //   MaterialPageRoute<void>(
+            //     builder: (BuildContext context) => const My(),
+            //   ),
+            // );
+
+            ///Navigator.of(context).push<void>(GradualChangeRoute(My()));
+            ///Navigator.of(context).push<void>(ZoomRoute(My()));  RotateAndZoomRoute
+            ///Navigator.of(context).push<void>(RotateAndZoomRoute(My()));
+            Navigator.of(context).push<void>(SlidingAroundRoute(My()));
           },
           changeIndex: (int index) {
             animationController.reverse().then<dynamic>((data) {
               if (!mounted) {
                 return;
               }
-              setState(() {
-                tabBody = tabList[index];
-                //this.index = index;
-              });
+              controller.jumpToPage(index);
             });
           },
         ),

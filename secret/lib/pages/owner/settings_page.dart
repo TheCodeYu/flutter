@@ -40,7 +40,7 @@ class _SettingPageState extends State<SettingPage>
     with TickerProviderStateMixin, BaseWidget {
   final ScrollController scrollController = ScrollController();
   late final AnimationController animationController;
-  late Animation<double> _staggerSettingsItemsAnimation;
+
   _ExpandableSetting? _expandedSettingId;
   String _packageInfo = "";
   void onTapSetting(_ExpandableSetting settingId) {
@@ -65,14 +65,7 @@ class _SettingPageState extends State<SettingPage>
   void initState() {
     animationController = widget.arguments['animationController'];
     animationController.addStatusListener(_closeSettingId);
-    _staggerSettingsItemsAnimation = CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(
-        0.5,
-        1.0,
-        curve: Curves.easeIn,
-      ),
-    );
+
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       //String appName = packageInfo.appName;
       //String packageName = packageInfo.packageName;

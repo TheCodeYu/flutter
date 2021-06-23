@@ -6,26 +6,39 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:secret/components/dialog/loading.dart';
 import 'package:secret/configs/global_states.dart';
+import 'package:secret/core/base_widget.dart';
+import 'package:secret/model/user.dart';
 import 'package:secret/utils/color.dart';
+import 'package:secret/utils/time_util.dart';
 
-class Personal extends StatelessWidget {
+class Personal extends StatelessWidget with BaseWidget {
   final AnimationController animationController;
   final Animation<double> animation;
 
   final double padding;
-  final Map map;
+  final User? user;
+  final Function() onPress;
   const Personal(
       {Key? key,
       required this.animationController,
       required this.animation,
+      required this.onPress,
       this.padding = 12.0,
-      required this.map})
+      required this.user})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var app = Provider.of<ApplicationData>(context);
+
+    if (user == null) return LoadingDialog(text: locale(context).loading);
+
+    var a = DateTime.now();
+    var b = user?.createTime ?? DateTime.now();
+    var date = TimeUtils.getDays(a.year, a.month, a.day) -
+        TimeUtils.getDays(b.year, b.month, b.day);
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget? child) {
@@ -98,7 +111,7 @@ class Personal extends StatelessWidget {
                                               padding: const EdgeInsets.only(
                                                   left: 4, bottom: 2),
                                               child: Text(
-                                                'Eaten',
+                                                locale(context).user_name,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.w500,
@@ -126,7 +139,7 @@ class Personal extends StatelessWidget {
                                                       left: padding / 3,
                                                       bottom: 3),
                                                   child: Text(
-                                                    '${map['eaten'] ?? 0}',
+                                                    user?.nickName ?? '',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontWeight:
@@ -141,7 +154,9 @@ class Personal extends StatelessWidget {
                                                       left: padding / 3,
                                                       bottom: 3),
                                                   child: Text(
-                                                    'Kcal',
+                                                    (user?.sex ?? '0') == '1'
+                                                        ? locale(context).male_
+                                                        : locale(context).male,
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontWeight:
@@ -187,7 +202,7 @@ class Personal extends StatelessWidget {
                                               padding: EdgeInsets.only(
                                                   left: padding / 3, bottom: 2),
                                               child: Text(
-                                                'Burned',
+                                                locale(context).phone,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.w500,
@@ -215,7 +230,7 @@ class Personal extends StatelessWidget {
                                                       left: padding / 3,
                                                       bottom: 3),
                                                   child: Text(
-                                                    '${(102 * animation.value).toInt()}',
+                                                    user?.phonenumber ?? '',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontWeight:
@@ -230,7 +245,7 @@ class Personal extends StatelessWidget {
                                                       left: padding / 3,
                                                       bottom: 3),
                                                   child: Text(
-                                                    'Kcal',
+                                                    '',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontWeight:
@@ -280,7 +295,7 @@ class Personal extends StatelessWidget {
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Text(
-                                            '${(1503 * animation.value).toInt()}',
+                                            date.toString(),
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               fontWeight: FontWeight.normal,
@@ -290,7 +305,7 @@ class Personal extends StatelessWidget {
                                             ),
                                           ),
                                           Text(
-                                            'Kcal left',
+                                            locale(context).user_date,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -313,8 +328,8 @@ class Personal extends StatelessWidget {
                                             HexColor("#8A98E8"),
                                             HexColor("#8A98E8")
                                           ],
-                                          angle: 140 +
-                                              (360 - 140) *
+                                          angle: date +
+                                              (360 - date) *
                                                   (1.0 - animation.value)),
                                       child: SizedBox(
                                         width: padding * 9,
@@ -353,7 +368,7 @@ class Personal extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  'Carbs',
+                                  locale(context).dept,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
@@ -396,7 +411,7 @@ class Personal extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 6),
                                   child: Text(
-                                    '12g left',
+                                    (user?.deptId ?? 0).toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
@@ -418,7 +433,7 @@ class Personal extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      'Protein',
+                                      locale(context).email,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
@@ -462,7 +477,7 @@ class Personal extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 6),
                                       child: Text(
-                                        '30g left',
+                                        user?.email ?? '',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w600,

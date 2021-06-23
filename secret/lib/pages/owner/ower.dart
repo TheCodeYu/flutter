@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:secret/api/system/login.dart';
 import 'package:secret/components/all/click_item.dart';
@@ -7,13 +8,14 @@ import 'package:secret/components/all/personal.dart';
 import 'package:secret/components/all/title_view.dart';
 import 'package:secret/components/app_bar/app_bar.dart' as MyAppBar;
 import 'package:secret/configs/global_config.dart';
+import 'package:secret/configs/rx_config.dart';
 import 'package:secret/core/base_widget.dart';
 import 'package:secret/model/user.dart';
 import 'package:secret/pages/owner/settings_page.dart';
 
 import '../login.dart';
 
-/// description:
+/// description: 个人主页，应用设置页
 ///
 /// user: yuzhou
 /// date: 2021/6/14
@@ -30,10 +32,10 @@ class _OwnerState extends State<Owner>
     with TickerProviderStateMixin, BaseWidget {
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
-  late Future<bool> future;
+  User? user;
   @override
   void initState() {
-    future = getData();
+    getData();
     super.initState();
   }
 
@@ -65,7 +67,10 @@ class _OwnerState extends State<Owner>
                 Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
         padding: dp(12.0),
-        map: {'eaten': 13},
+        user: user,
+        onPress: () async {
+          await getData();
+        },
       ),
     );
     listViews.add(
@@ -102,7 +107,7 @@ class _OwnerState extends State<Owner>
           animation: Tween<double>(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                   parent: widget.animationController,
-                  curve: Interval((1 / count) * 4, 1.0,
+                  curve: Interval((1 / count) * 3, 1.0,
                       curve: Curves.fastOutSlowIn))),
           animationController: widget.animationController,
         ),
@@ -117,6 +122,9 @@ class _OwnerState extends State<Owner>
           onTap: () async {
             // print('logout:${await logout()}');
             GlobalConfig.setToken('');
+            rx.push('bottom_bar', data: 0);
+
+            ///[fixed] 修复退出登陆界面，BottonBar定位不对
             Navigator.of(context).pushNamedAndRemoveUntil(
                 LoginPage.defaultRoute, (Route<dynamic> route) => false);
           },
@@ -141,6 +149,20 @@ class _OwnerState extends State<Owner>
           MyAppBar.AppBar(
               animationController: widget.animationController,
               scrollController: scrollController,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: dio.options.baseUrl + (user?.avatar ?? ''),
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(
+                          value: downloadProgress.progress),
+                  errorWidget: (context, url, error) => IconButton(
+                      iconSize: dp(75),
+                      onPressed: () {},
+                      icon: Image.asset(
+                        'images/init_icon.png',
+                      )),
+                ),
+              ],
               title: locale(context).my),
           SizedBox(
             height: MediaQuery.of(context).padding.bottom,
@@ -150,40 +172,35 @@ class _OwnerState extends State<Owner>
     );
   }
 
-  Future<bool> getData() async {
-    return true;
+  getData() async {
     var r = await getInfo();
-    User user = User.fromJson(r['user']);
-    log("info:${user.toString()}");
+    if (r['user'] is Map) {
+      user = User.fromJson(r['user']);
+      log("info:${user.toString()}");
+    }
     // r = await getRouters();
     // log("router:$r");
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));
-    return true;
+    setState(() {});
   }
 
   Widget getMainListViewUI() {
     addAllListData();
-    return FutureBuilder<bool>(
-        future: future,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (!snapshot.hasData) {
-            return const SizedBox();
-          } else {
-            return ListView.builder(
-              controller: scrollController,
-              padding: EdgeInsets.only(
-                top: AppBar().preferredSize.height +
-                    MediaQuery.of(context).padding.top,
-                bottom: dh(64) + MediaQuery.of(context).padding.bottom,
-              ),
-              itemCount: listViews.length,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, int index) {
-                widget.animationController.forward();
-                return listViews[index];
-              },
-            );
-          }
-        });
+
+    return ListView.builder(
+      controller: scrollController,
+      padding: EdgeInsets.only(
+        top: AppBar().preferredSize.height +
+            MediaQuery.of(context).padding.top +
+            dp(75),
+        bottom: dh(64) + MediaQuery.of(context).padding.bottom,
+      ),
+      itemCount: listViews.length,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (BuildContext context, int index) {
+        widget.animationController.forward();
+        return listViews[index];
+      },
+    );
   }
 }

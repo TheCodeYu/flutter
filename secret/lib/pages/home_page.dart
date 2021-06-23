@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:secret/components/bottom_bar/bottom_bar.dart';
 import 'package:secret/components/bottom_bar/tab_icons.dart';
-import 'package:secret/components/router_transition/sliding_around_router.dart';
 import 'package:secret/configs/rx_config.dart';
-import 'package:secret/pages/home/my.dart';
 import 'package:secret/pages/owner/ower.dart';
+import 'package:secret/pages/system/system.dart';
+import 'package:secret/pages/tools/tools.dart';
+import 'package:secret/pages/watch/watch.dart';
 
 import 'owner/permission_page.dart';
 
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     controller = PageController();
-    //controller.addListener(() {});
+
     getData();
     WidgetsBinding.instance!.addObserver(this);
     animationController = AnimationController(
@@ -57,16 +58,23 @@ class _HomePageState extends State<HomePage>
           PageView(
             controller: controller,
             onPageChanged: (index) {
+              print(index);
               rx.push('bottom_bar', data: index);
             },
             children: [
-              My(),
-              Owner(animationController: animationController),
-              My(),
+              System(
+                animationController: animationController,
+              ),
+              Watch(
+                animationController: animationController,
+              ),
+              Tools(
+                animationController: animationController,
+              ),
               Owner(animationController: animationController)
             ],
           ),
-          bottomBar()
+          bottomBar(),
         ],
       ),
       //bottomNavigationBar: bottomBar(),
@@ -114,7 +122,7 @@ class _HomePageState extends State<HomePage>
             ///Navigator.of(context).push<void>(GradualChangeRoute(My()));
             ///Navigator.of(context).push<void>(ZoomRoute(My()));  RotateAndZoomRoute
             ///Navigator.of(context).push<void>(RotateAndZoomRoute(My()));
-            Navigator.of(context).push<void>(SlidingAroundRoute(My()));
+            //Navigator.of(context).push<void>(SlidingAroundRoute(My()));
           },
           changeIndex: (int index) {
             animationController.reverse().then<dynamic>((data) {
